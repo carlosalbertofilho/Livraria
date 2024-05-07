@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Livraria.Application.DTOs;
 
-public struct EditBook ( 
+public class EditBook (
     string title,
     string author, 
     DateTime publishedAt, 
