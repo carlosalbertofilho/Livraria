@@ -1,4 +1,4 @@
-﻿@page "/novo-livro"
+﻿@page "/livros/novo-livro"
 @inject IBookService bookService
 @rendermode InteractiveServer
 <h3>Novo Livro</h3>
@@ -7,7 +7,7 @@
 
 <div class="row justify-content-center">
     <div class="col-6">
-        <EditForm Enhance="true" method="post" FormName="newBookForm" OnValidSubmit="AddBook" Model="@Book">
+        <EditForm Enhance="true" method="post" FormName="newBookForm" OnValidSubmit="AddBookHandler" Model="@Book">
             <DataAnnotationsValidator />
             <div class="mb-3">
                 <label for="title" class="form-label">Título</label>
@@ -71,7 +71,7 @@
     protected override void OnInitialized ()
         => Book = new EditBook( "", "", DateTime.Now, Domain.Enums.PublishingCompany.Nenhum, Domain.Enums.Category.Nenhum );
 
-    public async Task AddBook ()
+    public async Task AddBookHandler ()
     {
         var response = new HandleResponse(await bookService.Create(Book!));
         Status = response.Status;

@@ -14,6 +14,10 @@ public static class ViewBookExtension
                book.Id,
                book.Cover,
                book.Synopsis );
+    public static IEnumerable<ViewBook> ToViewBook ( this IEnumerable<Book> books )
+        => books is null 
+        ? throw new ArgumentNullException( nameof( books ) ) 
+        : books.Select( book => book.ToViewBook() );
 
     public static Book ToBook ( this ViewBook viewBook )
         => new( viewBook.Title,

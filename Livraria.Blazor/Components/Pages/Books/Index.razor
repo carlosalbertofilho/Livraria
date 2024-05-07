@@ -1,0 +1,76 @@
+﻿@page "/livros"
+@inject IBookService bookService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Catalogo de Livros</PageTitle>
+
+<h3>Livros</h3>
+
+@if (Status == ResponseStatus.Loading)
+{
+    <p>Carregando...</p>
+}
+else if (Status == ResponseStatus.Error)
+{
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Ops...</h4>
+        @foreach ( var error in Errors )
+        {
+            <p>@error</p>
+        }
+    </div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Ano de Publicação</th>
+                <th>Editora</th>
+                <th>Categoria</th>
+                <th>Capa</th>
+                <th>Sinopse</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in Books)
+            {
+                <tr>
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>@book.PublishedAt</td>
+                    <td>@book.PublishingCompany</td>
+                    <td>@book.Category</td>
+                    <td>@book.Cover</td>
+                    <td>@book.Synopsis</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button class="btn btn-primary" onclick="ToCreate">Novo Livro</button>
+}
+
+
+
+@code {
+    public List<ViewBook> Books { get; set; } = [];
+    public ResponseStatus Status { get; set; } = ResponseStatus.Loading;
+    public List<string> Errors { get; set; } = [];
+
+    protected override async Task OnInitializedAsync ()
+    {
+        var response = await bookService.GetAll();
+        Books = response.Data!.ToList();
+        Errors = response.Errors;
+        Status = response.Data is null
+            ? ResponseStatus.Error
+            : ResponseStatus.Success;
+    }
+
+    public void ToCreate ()
+        => NavigationManager.NavigateTo( "/novo-livro" );
+
+}

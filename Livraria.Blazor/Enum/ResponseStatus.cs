@@ -3,5 +3,6 @@
 public enum ResponseStatus
 {
     Success,
-    Error
+    Error,
+    Loading
 }
