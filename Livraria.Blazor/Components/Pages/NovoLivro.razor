@@ -1,0 +1,27 @@
+﻿@page "/novo-livro"
+@inject IBookService bookService
+<h3>Novo Livro</h3>
+
+<PageTitle>Novo Livro</PageTitle>
+
+<div class="row justify-content-center">
+    <div class="col-6">
+        <EditForm method="post" FormName="newBookForm" OnValidSubmit="AddBook" Model="Book">
+
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromForm(FormName = "newBookForm")]
+    public EditBook Book { get; set; }
+
+    protected override void OnInitialized()
+        => Book = new EditBook( null, null, DateTime.Now, Domain.Enums.PublishingCompany.Nenhum, Domain.Enums.Category.Nenhum );
+
+    private async Task AddBook ()
+    {
+        var response = await bookService.Create(Book!);
+
+    }
+}

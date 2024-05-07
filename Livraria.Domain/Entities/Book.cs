@@ -34,8 +34,6 @@ public class Book ( string title,
 
     public int Id { get; private set; } = id;
 
-    [Required( ErrorMessage = "Título do livro é obrigatório" )]
-    [StringLength( 150 )]
     public string Title
     {
         get => title;
@@ -46,8 +44,6 @@ public class Book ( string title,
         }
     }
 
-    [Required( ErrorMessage = "Autor do livro é obrigatório" )]
-    [StringLength( 150 )]
     public string Author
     {
         get => author;
@@ -58,8 +54,6 @@ public class Book ( string title,
         }
     }
 
-    [Required( ErrorMessage = "Data de publicação do livro é obrigatória" )]
-    [DataType( DataType.Date )]
     public DateTime PublishedAt
     {
         get => publishedAt;
@@ -80,8 +74,6 @@ public class Book ( string title,
     }
 
 
-    [Required( ErrorMessage = "Editora do livro é obrigatória" )]
-    [EnumDataType( typeof( PublishingCompany ), ErrorMessage = "Selectione uma editora" )]
     public PublishingCompany PublishingCompany
     {
         get => publishingCompany;
@@ -92,14 +84,10 @@ public class Book ( string title,
         }
     }
 
-    [StringLength( 300, ErrorMessage = "Campo pode ter até 300 caracteres" )]
     public string Cover { get; private set; } = cover;
 
-    [StringLength( 500, ErrorMessage = "Campo pode ter até 500 caracteres" )]
     public string Synopsis { get; private set; } = synopsis;
 
-    [Required( ErrorMessage = "Categoria do livro é obrigatória" )]
-    [EnumDataType( typeof( Category ), ErrorMessage = "Selecione uma categoria" )]
     public Category Category
     {
         get => category;

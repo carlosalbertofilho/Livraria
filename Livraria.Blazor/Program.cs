@@ -9,6 +9,7 @@ builder.Services.AddRazorComponents()
 
 // Add services to the container.
 builder.Services.AddDbInfra(builder.Configuration);
+builder.Services.AddServicesApp();
 
 var app = builder.Build();
 
