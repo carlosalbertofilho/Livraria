@@ -13,43 +13,13 @@
         <ShowLoading/>
         break;
     case ResponseStatus.Error:
-    {
         <ShowError Errors="Errors"/>
         break;
-    }
     case ResponseStatus.Success:
     default:
-    {
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Título</th>
-                <th>Autor</th>
-                <th>Ano de Publicação</th>
-                <th>Editora</th>
-                <th>Categoria</th>
-                <th>Capa</th>
-                <th>Sinopse</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var book in Books)
-            {
-                <tr>
-                    <td>@book.Title</td>
-                    <td>@book.Author</td>
-                    <td>@book.PublishedAt</td>
-                    <td>@book.PublishingCompany</td>
-                    <td>@book.Category</td>
-                    <td>@book.Cover</td>
-                    <td>@book.Synopsis</td>
-                </tr>
-            }
-            </tbody>
-        </table>
+        <BookCards Books="Books"/>
         <NavLink class="btn btn-primary" href="/livros/novo-livro">Novo Livro</NavLink>
         break;
-    }
 }
 
 

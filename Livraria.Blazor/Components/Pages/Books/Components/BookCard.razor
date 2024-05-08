@@ -1,0 +1,16 @@
+<div class="card shadow-sm">
+    <img src="/images/@Book.Cover" class="card-img-top" alt="@Book.Title" \>
+    <div class="card-body">
+        <h5 class="card-title">@Book.Title</h5>
+        <p class="card-text">@Book.Author</p>
+        <p class="card-text">@Book.PublishedAt</p>
+        <p class="card-text">@Book.PublishingCompany</p>
+        <p class="card-text">@Book.Category</p>
+        <p class="card-text">@Book.Synopsis</p>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public ViewBook Book { get; set; } = null!;
+}
