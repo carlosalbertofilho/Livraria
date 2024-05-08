@@ -1,15 +1,22 @@
-
-<div class="card shadow-sm">
-    <img src="/image/@Book!.Cover" class="card-img-top" alt="@Book.Title" \>
-    <div class="card-body">
-        <h5 class="card-title">@Book.Title</h5>
-        <p class="card-text">@Book.Author</p>
-        <p class="card-text">@Book.PublishedAt.ToShortDateString()</p>
-        <p class="card-text">@Book.PublishingCompany</p>
-        <p class="card-text">@Book.Category</p>
-        <p class="card-text">@Book.Synopsis</p>
-    </div>
-</div>
+@switch ( Book )
+{
+    case null:
+        <p>Carregando...</p>
+        break;
+    case var book:
+        <div class="card shadow-sm">
+            <img src="/image/@Book.Cover" class="card-img-top" alt="@Book.Title">
+            <div class="card-body">
+                <h5 class="card-title">@Book.Title</h5>
+                <p class="card-text">@Book.Author</p>
+                <p class="card-text">@Book.PublishedAt.ToShortDateString()</p>
+                <p class="card-text">@Book.PublishingCompany</p>
+                <p class="card-text">@Book.Category</p>
+                <p class="card-text">@Book.Synopsis</p>
+            </div>
+        </div>
+        break;
+}
 
 @code {
     [Parameter] public ViewBook? Book { get; set; }

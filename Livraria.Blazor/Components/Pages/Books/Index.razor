@@ -18,15 +18,16 @@
     case ResponseStatus.Success:
     default:
         <BookCards Books="@Books" />
+        <NavLink class="btn btn-primary mb-5" href="/livros/novo-livro">Cadastra Livro</NavLink>
         break;
 }
 
 
 @code 
 {
-    private List<ViewBook> Books { get;  } = [];
-    private ResponseStatus Status { get; set; } = ResponseStatus.Loading;
-    private List<string> Errors { get; set; } = [];
+    public List<ViewBook> Books { get;  } = [];
+    public ResponseStatus Status { get; set; } = ResponseStatus.Loading;
+    public List<string> Errors { get; set; } = [];
 
     protected override async Task OnInitializedAsync()
     {
