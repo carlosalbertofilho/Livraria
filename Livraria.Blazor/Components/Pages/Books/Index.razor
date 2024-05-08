@@ -13,18 +13,18 @@
         <ShowLoading/>
         break;
     case ResponseStatus.Error:
-        <ShowError Errors="Errors"/>
+        <ShowError Errors="@Errors" />
         break;
     case ResponseStatus.Success:
     default:
-        <BookCards Books="Books"/>
-        <NavLink class="btn btn-primary" href="/livros/novo-livro">Novo Livro</NavLink>
+        <BookCards Books="@Books" />
         break;
 }
 
 
-@code {
-    private List<ViewBook> Books { get; } = [];
+@code 
+{
+    private List<ViewBook> Books { get;  } = [];
     private ResponseStatus Status { get; set; } = ResponseStatus.Loading;
     private List<string> Errors { get; set; } = [];
 
@@ -35,6 +35,4 @@
         Errors = response.Errors;
         Status = response.Status;
     }
-
-
 }

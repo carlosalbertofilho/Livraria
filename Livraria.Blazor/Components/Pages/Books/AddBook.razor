@@ -2,20 +2,21 @@
 @inject IBookService bookService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
+@attribute [StreamRendering]
 <h3>Novo Livro</h3>
 
 <PageTitle>Novo Livro</PageTitle>
 
 @switch (Status)
 {
+    case ResponseStatus.Loading:
+        <ShowLoading/>
+        break;
     case ResponseStatus.Error:
-        <ShowError Errors="Errors"/>
+        <ShowError Errors=@Errors />
         break;
     case ResponseStatus.Success:
         <ShowSuccess Message="Livro cadastrado com sucesso!" Books=@Response/>
-        break;
-    case ResponseStatus.Loading:
-        <ShowLoading/>
         break;
     default:
         <div class="row justify-content-center">
@@ -82,12 +83,15 @@
     [SupplyParameterFromForm(FormName = "newBookForm")]
     public EditBook Book { get; set; } = null!;
 
-    private ResponseStatus Status { get; set; } = ResponseStatus.Loading;
+    private ResponseStatus? Status { get; set; } = ResponseStatus.Loading;
     private List<ViewBook> Response { get; } = [];
     private List<string> Errors { get; set; } = [];
 
     protected override void OnInitialized()
-        => Book = new EditBook("", "", DateTime.Now, Domain.Enums.PublishingCompany.Nenhum, Domain.Enums.Category.Nenhum);
+    {
+        Book = new EditBook("", "", DateTime.Now, Domain.Enums.PublishingCompany.Nenhum, Domain.Enums.Category.Nenhum);
+        Status = null;
+    }
 
     public async Task AddBookHandler()
     {
