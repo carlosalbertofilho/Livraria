@@ -1,6 +1,5 @@
 ﻿@page "/livros"
 @inject IBookService bookService
-@inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
 <PageTitle>Catalogo de Livros</PageTitle>
@@ -9,7 +8,7 @@
 
 @if (Status == ResponseStatus.Loading)
 {
-    <p>Carregando...</p>
+    <img class="img-fluid justify-content-center" src="/image/loading.gif" alt="Carregando ..."/>
 }
 else if (Status == ResponseStatus.Error)
 {
@@ -50,7 +49,7 @@ else
             }
         </tbody>
     </table>
-    <button class="btn btn-primary" onclick="ToCreate">Novo Livro</button>
+    <NavLink class="btn btn-primary" href="/livros/novo-livro">Novo Livro</NavLink>
 }
 
 
@@ -68,7 +67,5 @@ else
         Status = response.Status;
     }
 
-    public void ToCreate ()
-        => NavigationManager.NavigateTo( "/novo-livro" );
 
 }
