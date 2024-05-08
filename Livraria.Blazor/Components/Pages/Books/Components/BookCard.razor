@@ -5,7 +5,9 @@
         break;
     case var book:
         <div class="card shadow-sm">
-            <img src="/image/@Book.Cover" class="card-img-top" alt="@Book.Title">
+            <div class="embed-responsive embed-responsive-16by9">
+                <img src="/image/@Book.Cover" class="card-img-top" alt="@Book.Title">
+            </div>
             <div class="card-body">
                 <h5 class="card-title">@Book.Title</h5>
                 <p class="card-text">@Book.Author</p>
