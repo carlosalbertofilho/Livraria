@@ -1,110 +1,39 @@
 ﻿@page "/livros/novo-livro"
-@inject IBookService bookService
-@inject NavigationManager navigationManager
 @rendermode InteractiveServer
 @attribute [StreamRendering]
-<h3>Novo Livro</h3>
 
 <PageTitle>Novo Livro</PageTitle>
 
-@switch (Status)
+@switch ( Status )
 {
     case ResponseStatus.Loading:
-        <ShowLoading/>
+        <ShowLoading />
         break;
     case ResponseStatus.Error:
         <ShowError Errors=@Errors />
         break;
     case ResponseStatus.Success:
-        <ShowSuccess Message="Livro cadastrado com sucesso!" Books=@Response/>
+        <ShowSuccess Message="Livro cadastrado com sucesso!" Books="@Response" />
         break;
     default:
-        <div class="row justify-content-center">
-            <div class="col-6">
-                <EditForm Enhance="true" method="post" FormName="newBookForm" OnValidSubmit="AddBookHandler" Model="@Book">
-                    <DataAnnotationsValidator/>
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Título</label>
-                        <InputText id="title" class="form-control" @bind-Value="Book.Title"/>
-                        <ValidationMessage For="@(() => Book.Title)"/>
-                    </div>
-                    <div class="mb-3">
-                        <label for="author" class="form-label">Autor</label>
-                        <InputText id="author" class="form-control" @bind-Value="Book.Author"/>
-                        <ValidationMessage For="@(() => Book.Author)"/>
-                    </div>
-                    <div class="mb-3">
-                        <label for="publishedAt" class="form-label">Ano de Publicação</label>
-                        <InputDate id="publishedAt" class="from-control" @bind-Value="Book.PublishedAt"/>
-                        <ValidationMessage For="@(() => Book.PublishedAt)"/>
-                    </div>
-                    <div class="mb-3">
-                        <label for="publishingCompany" class="form-label">Editora</label>
-                        <InputSelect id="publishingCompany" class="form-control" @bind-Value="Book.PublishingCompany">
-                            <option value="">Selecione...</option>
-                            @foreach (var item in Enum.GetValues(typeof(PublishingCompany)))
-                            {
-                                <option value="@item">@item</option>
-                            }
-                        </InputSelect>
-                        <ValidationMessage For="@(() => Book.PublishingCompany)"/>
-                    </div>
-                    <div class="mb3">
-                        <label for="category" class="form-label">Categoria</label>
-                        <InputSelect id="category" class="form-control" @bind-Value="Book.Category">
-                            <option value="">Selecione...</option>
-                            @foreach (var item in Enum.GetValues(typeof(Category)))
-                            {
-                                <option value="@item">@item</option>
-                            }
-                        </InputSelect>
-                        <ValidationMessage For="@(() => Book.Category)"/>
-                    </div>
-                    <div class="mb-3">
-                        <label for="cover" class="from-label">Capa</label>
-                        <InputText id="cover" class="form-control" @bind-Value="Book.Cover"/>
-                        <ValidationMessage For="@(() => Book.Cover)"/>
-                    </div>
-                    <div class="mb-3">
-                        <label for="synopsis" class="from-label">Sinopse</label>
-                        <InputTextArea id="synopsis" class="form-control" @bind-Value="Book.Synopsis"/>
-                        <ValidationMessage For="@(() => Book.Synopsis)"/>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Salvar</button>
-                </EditForm>
-            </div>
-        </div>
+
         break;
 }
 
 
 @code {
-
-    [SupplyParameterFromForm(FormName = "newBookForm")]
-    public EditBook Book { get; set; } = null!;
-
-    private ResponseStatus? Status { get; set; } = ResponseStatus.Loading;
-    private List<ViewBook> Response { get; } = [];
+    private EditBook? Book { get; set; }
+    private ResponseStatus? Status { get; set; }
+    private List<ViewBook> Response { get; set; } = [];
     private List<string> Errors { get; set; } = [];
 
-    protected override void OnInitialized()
-    {
-        Book = new EditBook("", "", DateTime.Now, Domain.Enums.PublishingCompany.Nenhum, Domain.Enums.Category.Nenhum);
-        Status = null;
-    }
+    private void HandleResponseChange ( ViewBook Response )
+        => this.Response.Add( Response );
 
-    public async Task AddBookHandler()
-    {
-        var response = await bookService.Create(Book!);
-        Status = response.Status;
-        Response.AddRange(response.Data);
-        Errors = response.Errors;
-    }
+    private void HandleStatusChange ( ResponseStatus? status )
+        => Status = status;
 
-    private void AwaitMessage()
-    {
-        Task.Delay(4000);
-        navigationManager.NavigateTo("/livros");
-    }
+    private void HandleErrorsChange ( List<string> errors )
+        => Errors = errors;
 
 }

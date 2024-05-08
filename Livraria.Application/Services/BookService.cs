@@ -2,7 +2,6 @@
 using Livraria.Application.DTOs;
 using Livraria.Application.Response;
 using Livraria.Domain.Abstrations;
-using Livraria.Infrastructure.Repositories;
 using Livraria.Application.Extensions;
 
 namespace Livraria.Application.Services;

@@ -1,0 +1,53 @@
+﻿@page "/livros/editar/{id}"
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<PageTitle>Editar Livro</PageTitle>
+
+@switch ( Status )
+{
+    case ResponseStatus.Loading:
+        <ShowLoading />
+        break;
+    case ResponseStatus.Error:
+        <ShowError Errors=@Errors />
+        break;
+    case ResponseStatus.Success:
+        <ShowSuccess Message="Livro atualizado com sucesso!" Books=@Response />
+        break;
+    default:
+        <EditBookPage BookId="Id"
+            OnResponseChange="HandleResponseChange"
+            OnStatusChange="HandleStatusChange"
+            OnErrorsChange="HandleErrorsChange"/>
+        break;
+}
+
+
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private EditBook? Book { get; set; }
+    private ResponseStatus? Status { get; set; }
+    private List<ViewBook> Response { get; set; } = [];
+    private List<string> Errors { get; set; } = [];
+
+    private Task HandleResponseChange ( ViewBook response )
+    {
+        this.Response.Add( response );
+        return Task.CompletedTask;
+    }
+
+    private Task HandleStatusChange ( ResponseStatus? status )
+    {
+        Status = status;
+        return Task.CompletedTask;
+    }
+
+    private Task HandleErrorsChange ( List<string> errors )
+    {
+        Errors = errors;
+        return Task.CompletedTask;
+    }
+
+}

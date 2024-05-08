@@ -1,0 +1,118 @@
+﻿@inject IBookService bookService
+
+
+<h3>@Title</h3>
+
+<div class="row justify-content-center">
+    <div class="col-6">
+        <EditForm Enhance="true" method="post" FormName="BookForm" OnValidSubmit="OnValidSubmit" Model="@Book">
+            <DataAnnotationsValidator />
+            <div class="mb-3">
+                <label for="title" class="form-label">Título</label>
+                <InputText id="title" class="form-control" @bind-Value="Book.Title" />
+                <ValidationMessage For="@(() => Book.Title)" />
+            </div>
+            <div class="mb-3">
+                <label for="author" class="form-label">Autor</label>
+                <InputText id="author" class="form-control" @bind-Value="Book.Author" />
+                <ValidationMessage For="@(() => Book.Author)" />
+            </div>
+            <div class="mb-3">
+                <label for="publishedAt" class="form-label">Ano de Publicação</label>
+                <InputDate id="publishedAt" class="from-control" @bind-Value="Book.PublishedAt" />
+                <ValidationMessage For="@(() => Book.PublishedAt)" />
+            </div>
+            <div class="mb-3">
+                <label for="publishingCompany" class="form-label">Editora</label>
+                <InputSelect id="publishingCompany" class="form-control" @bind-Value="Book.PublishingCompany">
+                    <option value="">Selecione...</option>
+                    @foreach (var item in Enum.GetValues(typeof(PublishingCompany)))
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => Book.PublishingCompany)" />
+            </div>
+            <div class="mb3">
+                <label for="category" class="form-label">Categoria</label>
+                <InputSelect id="category" class="form-control" @bind-Value="Book.Category">
+                    <option value="">Selecione...</option>
+                    @foreach (var item in Enum.GetValues(typeof(Category)))
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => Book.Category)" />
+            </div>
+            <div class="mb-3">
+                <label for="cover" class="from-label">Capa</label>
+                <InputText id="cover" class="form-control" @bind-Value="Book.Cover" />
+                <ValidationMessage For="@(() => Book.Cover)" />
+            </div>
+            <div class="mb-3">
+                <label for="synopsis" class="from-label">Sinopse</label>
+                <InputTextArea id="synopsis" class="form-control" @bind-Value="Book.Synopsis" />
+                <ValidationMessage For="@(() => Book.Synopsis)" />
+            </div>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int BookId { get; set; } = 0;
+    [Parameter] public EventCallback<ViewBook> OnResponseChange { get; set; }
+    [Parameter] public EventCallback<ResponseStatus?> OnStatusChange { get; set; }
+    [Parameter] public EventCallback<List<string>> OnErrorsChange { get; set; }
+
+    [SupplyParameterFromQuery(FormName = "BookForm")]
+    public EditBook Book { get; set; }
+
+    private string Title { get; set; } = string.Empty;
+
+    private ResponseStatus? Status { get; set; }
+    private ViewBook Response { get; set; } = null!;
+    private List<string> Errors { get; set; } = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        Title = BookId == 0 ? "Novo Livro" : "Editar Livro";
+        try
+        {
+            Book = BookId == 0
+                ? new EditBook("", "", DateTime.Now, PublishingCompany.Nenhum, Category.Nenhum)
+                : await bookService.GetById(BookId);
+        }
+        catch (Exception ex)
+        {
+            Status = ResponseStatus.Error;
+            Errors.Add(ex.Message);
+        }
+    }
+
+    private async Task OnAction(EditBook book)
+    {
+        try
+        {
+            var response = BookId == 0
+                ? await bookService.Create(book)
+                : await bookService.Update(BookId, book);
+            Status = response.Status;
+            Response = response.Data;
+            Errors = response.Errors;
+        }
+        catch (Exception ex)
+        {
+            Status = ResponseStatus.Error;
+            Errors.Add(ex.Message);
+        }
+    }
+
+    private async Task OnValidSubmit()
+    {
+        await OnAction(Book);
+        await OnResponseChange.InvokeAsync(EditBook);
+        await OnStatusChange.InvokeAsync(Status);
+        await OnErrorsChange.InvokeAsync(Errors);
+    }
+}
