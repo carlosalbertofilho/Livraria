@@ -16,11 +16,11 @@ public class BookService ( IBookRepository bookRepository ) : IBookService
 		try
 		{
 			var createdBook = await _bookRepository.CreateAsync( book );
-			return new DefaultResponse<ViewBook>( createdBook );
+			return new( createdBook );
 		}
 		catch ( Exception e )
 		{
-            return new DefaultResponse<ViewBook>( e.Message );
+            return new( e.Message );
 
         }
     }
@@ -33,21 +33,46 @@ public class BookService ( IBookRepository bookRepository ) : IBookService
         }
         catch ( Exception e )
         {
-            return new DefaultResponse<IEnumerable<ViewBook>>( e.Message );
+            return new( e.Message );
         }
     }
 
-    public Task<DefaultResponse<ViewBook>> GetById ( int id )
+    public async Task<DefaultResponse<ViewBook>> GetById ( int id )
     {
-        throw new NotImplementedException();
+        try
+        {
+            var book = await _bookRepository.GetByIdAsync( id );
+            return new( book.ToViewBook() );
+        }
+        catch (Exception e)
+        {
+            return new( e.Message );
+        }
     }
-    public Task<DefaultResponse<ViewBook>> Delete ( int id )
+    public async Task<DefaultResponse<ViewBook>> Delete ( int id )
     {
-        throw new NotImplementedException();
+        try
+        {
+            var book = await _bookRepository.GetByIdAsync( id );
+            await _bookRepository.DeleteAsync( id );
+            return new( book.ToViewBook() );
+        }
+        catch ( Exception e )
+        {
+            return new( e.Message );
+        }
     }
 
-    public Task<DefaultResponse<ViewBook>> Update ( EditBook book )
+    public async Task<DefaultResponse<ViewBook>> Update ( EditBook book )
     {
-        throw new NotImplementedException();
+        try
+        {
+            var updatedBook = await _bookRepository.UpdateAsync( book );
+            return new( updatedBook );
+        }
+        catch ( Exception e )
+        {
+            return new( e.Message );
+        }
     }
 }

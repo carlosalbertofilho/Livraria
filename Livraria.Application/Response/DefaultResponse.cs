@@ -1,4 +1,4 @@
-﻿using Livraria.Blazor.Enum;
+﻿using Livraria.Application.Enum;
 
 namespace Livraria.Application.Response;
 

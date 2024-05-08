@@ -1,29 +1,27 @@
 ﻿@page "/livros"
 @inject IBookService bookService
 @rendermode InteractiveServer
+@attribute [StreamRendering]
 
 <PageTitle>Catalogo de Livros</PageTitle>
 
 <h3>Livros</h3>
 
-@if (Status == ResponseStatus.Loading)
+@switch (Status)
 {
-    <img class="img-fluid justify-content-center" src="/image/loading.gif" alt="Carregando ..."/>
-}
-else if (Status == ResponseStatus.Error)
-{
-    <div class="alert alert-danger" role="alert">
-        <h4 class="alert-heading">Ops...</h4>
-        @foreach ( var error in Errors )
-        {
-            <p>@error</p>
-        }
-    </div>
-}
-else
-{
-    <table class="table">
-        <thead>
+    case ResponseStatus.Loading:
+        <ShowLoading/>
+        break;
+    case ResponseStatus.Error:
+    {
+        <ShowError Errors="Errors"/>
+        break;
+    }
+    case ResponseStatus.Success:
+    default:
+    {
+        <table class="table">
+            <thead>
             <tr>
                 <th>Título</th>
                 <th>Autor</th>
@@ -33,8 +31,8 @@ else
                 <th>Capa</th>
                 <th>Sinopse</th>
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             @foreach (var book in Books)
             {
                 <tr>
@@ -47,17 +45,18 @@ else
                     <td>@book.Synopsis</td>
                 </tr>
             }
-        </tbody>
-    </table>
-    <NavLink class="btn btn-primary" href="/livros/novo-livro">Novo Livro</NavLink>
+            </tbody>
+        </table>
+        <NavLink class="btn btn-primary" href="/livros/novo-livro">Novo Livro</NavLink>
+        break;
+    }
 }
 
 
-
 @code {
-    public List<ViewBook> Books { get; set; } = [];
-    public ResponseStatus Status { get; set; } = ResponseStatus.Loading;
-    public List<string> Errors { get; set; } = [];
+    private List<ViewBook> Books { get; } = [];
+    private ResponseStatus Status { get; set; } = ResponseStatus.Loading;
+    private List<string> Errors { get; set; } = [];
 
     protected override async Task OnInitializedAsync()
     {

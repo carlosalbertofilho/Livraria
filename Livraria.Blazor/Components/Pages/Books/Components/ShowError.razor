@@ -1,0 +1,13 @@
+<div class="alert alert-danger" role="alert">
+    <h4 class="alert-heading">Ops...</h4>
+    @foreach ( var error in Errors )
+    {
+    <p>@error</p>
+    }
+    <NavLink class="btn btn-primary" href="/livros">Voltar</NavLink>
+</div>
+@code {
+    [Parameter]
+    public List<string> Errors { get; set; } = null!;
+    
+}

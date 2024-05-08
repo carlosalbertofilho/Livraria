@@ -1,0 +1,19 @@
+<div class="alert alert-success" role="alert">
+    <h4 class="alert-heading">Sucesso!</h4>
+    <p>@Message</p>
+    @if (Books is not null)
+    {
+        foreach (var book in Books)
+        {
+            <p>@book.Id - @book.Title - @book.Author</p>
+        }
+    }
+    <NavLink class="btn btn-primary" href="/livros">Voltar</NavLink>
+</div>
+
+@code {
+    [Parameter]
+    public string Message { get; set; } = "Operação realizada com sucesso!";
+    [Parameter]
+    public List<ViewBook>? Books { get; set; }
+}

@@ -6,44 +6,36 @@
 
 <PageTitle>Novo Livro</PageTitle>
 
-@switch ( Status )
+@switch (Status)
 {
     case ResponseStatus.Error:
-        <div class="alert alert-danger" role="alert">
-            <h4 class="alert-heading">Ops...</h4>
-            @foreach ( var error in Errors )
-            {
-                <p>@error</p>
-            }
-        </div>
-        AwaitMessage();
+        <ShowError Errors="Errors"/>
         break;
     case ResponseStatus.Success:
-        <div class="alert alert-success" role="alert">
-            <h4 class="alert-heading">Sucesso!</h4>
-            <p>Livro cadastrado com sucesso!</p>
-        </div>
-        AwaitMessage();
+        <ShowSuccess Message="Livro cadastrado com sucesso!" Books=@Response/>
+        break;
+    case ResponseStatus.Loading:
+        <ShowLoading/>
         break;
     default:
         <div class="row justify-content-center">
             <div class="col-6">
                 <EditForm Enhance="true" method="post" FormName="newBookForm" OnValidSubmit="AddBookHandler" Model="@Book">
-                    <DataAnnotationsValidator />
+                    <DataAnnotationsValidator/>
                     <div class="mb-3">
                         <label for="title" class="form-label">Título</label>
-                        <InputText id="title" class="form-control" @bind-Value="Book.Title" />
-                        <ValidationMessage For="@(() => Book.Title)" />
+                        <InputText id="title" class="form-control" @bind-Value="Book.Title"/>
+                        <ValidationMessage For="@(() => Book.Title)"/>
                     </div>
                     <div class="mb-3">
                         <label for="author" class="form-label">Autor</label>
-                        <InputText id="author" class="form-control" @bind-Value="Book.Author" />
-                        <ValidationMessage For="@(() => Book.Author)" />
+                        <InputText id="author" class="form-control" @bind-Value="Book.Author"/>
+                        <ValidationMessage For="@(() => Book.Author)"/>
                     </div>
                     <div class="mb-3">
                         <label for="publishedAt" class="form-label">Ano de Publicação</label>
-                        <InputDate id="publishedAt" class="from-control" @bind-Value="Book.PublishedAt" />
-                        <ValidationMessage For="@(() => Book.PublishedAt)" />
+                        <InputDate id="publishedAt" class="from-control" @bind-Value="Book.PublishedAt"/>
+                        <ValidationMessage For="@(() => Book.PublishedAt)"/>
                     </div>
                     <div class="mb-3">
                         <label for="publishingCompany" class="form-label">Editora</label>
@@ -54,7 +46,7 @@
                                 <option value="@item">@item</option>
                             }
                         </InputSelect>
-                        <ValidationMessage For="@(() => Book.PublishingCompany)" />
+                        <ValidationMessage For="@(() => Book.PublishingCompany)"/>
                     </div>
                     <div class="mb3">
                         <label for="category" class="form-label">Categoria</label>
@@ -65,17 +57,17 @@
                                 <option value="@item">@item</option>
                             }
                         </InputSelect>
-                        <ValidationMessage For="@(() => Book.Category)" />
+                        <ValidationMessage For="@(() => Book.Category)"/>
                     </div>
                     <div class="mb-3">
                         <label for="cover" class="from-label">Capa</label>
-                        <InputText id="cover" class="form-control" @bind-Value="Book.Cover" />
-                        <ValidationMessage For="@(() => Book.Cover)" />
+                        <InputText id="cover" class="form-control" @bind-Value="Book.Cover"/>
+                        <ValidationMessage For="@(() => Book.Cover)"/>
                     </div>
                     <div class="mb-3">
                         <label for="synopsis" class="from-label">Sinopse</label>
-                        <InputTextArea id="synopsis" class="form-control" @bind-Value="Book.Synopsis" />
-                        <ValidationMessage For="@(() => Book.Synopsis)" />
+                        <InputTextArea id="synopsis" class="form-control" @bind-Value="Book.Synopsis"/>
+                        <ValidationMessage For="@(() => Book.Synopsis)"/>
                     </div>
                     <button type="submit" class="btn btn-primary">Salvar</button>
                 </EditForm>
@@ -85,27 +77,30 @@
 }
 
 
-
 @code {
-    [SupplyParameterFromForm( FormName = "newBookForm" )]
+
+    [SupplyParameterFromForm(FormName = "newBookForm")]
     public EditBook Book { get; set; } = null!;
-    public ResponseStatus Status { get; set; } = ResponseStatus.Loading;
-    public List<ViewBook> Response { get; set; } = [];
-    public List<string> Errors { get; set; } = [];
 
-    protected override void OnInitialized ()
-        => Book = new EditBook( "", "", DateTime.Now, Domain.Enums.PublishingCompany.Nenhum, Domain.Enums.Category.Nenhum );
+    private ResponseStatus Status { get; set; } = ResponseStatus.Loading;
+    private List<ViewBook> Response { get; } = [];
+    private List<string> Errors { get; set; } = [];
 
-    public async Task AddBookHandler ()
+    protected override void OnInitialized()
+        => Book = new EditBook("", "", DateTime.Now, Domain.Enums.PublishingCompany.Nenhum, Domain.Enums.Category.Nenhum);
+
+    public async Task AddBookHandler()
     {
         var response = await bookService.Create(Book!);
         Status = response.Status;
-        Response.AddRange( response.Data );
+        Response.AddRange(response.Data);
         Errors = response.Errors;
     }
-    public void AwaitMessage ()
+
+    private void AwaitMessage()
     {
-        Task.Delay( 4000 );
-        navigationManager.NavigateTo( "/livros" )
+        Task.Delay(4000);
+        navigationManager.NavigateTo("/livros");
     }
+
 }

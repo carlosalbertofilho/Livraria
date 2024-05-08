@@ -1,4 +1,4 @@
-﻿namespace Livraria.Blazor.Enum;
+﻿namespace Livraria.Application.Enum;
 
 public enum ResponseStatus
 {
