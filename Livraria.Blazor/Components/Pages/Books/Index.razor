@@ -60,14 +60,12 @@ else
     public ResponseStatus Status { get; set; } = ResponseStatus.Loading;
     public List<string> Errors { get; set; } = [];
 
-    protected override async Task OnInitializedAsync ()
+    protected override async Task OnInitializedAsync()
     {
         var response = await bookService.GetAll();
-        Books = response.Data!.ToList();
+        Books.AddRange(response.Data.SelectMany(x => x));
         Errors = response.Errors;
-        Status = response.Data is null
-            ? ResponseStatus.Error
-            : ResponseStatus.Success;
+        Status = response.Status;
     }
 
     public void ToCreate ()

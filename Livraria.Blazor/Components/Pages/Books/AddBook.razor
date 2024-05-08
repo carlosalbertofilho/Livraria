@@ -65,7 +65,7 @@
     [SupplyParameterFromForm(FormName = "newBookForm")]
     public EditBook Book { get; set; } = null!;
     public ResponseStatus Status { get; set; }
-    public ViewBook? Response { get; set; }
+    public List<ViewBook> Response { get; set; } = [];
     public List<string> Errors { get; set; } = [];
 
     protected override void OnInitialized ()
@@ -73,9 +73,9 @@
 
     public async Task AddBookHandler ()
     {
-        var response = new HandleResponse(await bookService.Create(Book!));
+        var response = await bookService.Create(Book!);
         Status = response.Status;
-        Response = response.ResponseData;
+        Response.AddRange(response.Data);
         Errors = response.Errors;
     }
 }
