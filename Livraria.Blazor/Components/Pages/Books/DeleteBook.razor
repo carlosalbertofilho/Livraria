@@ -1,0 +1,46 @@
+﻿@page "/livros/apagar/{id}"
+@inject IBookService bookService
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<PageTitle>Editar Livro</PageTitle>
+
+@switch ( StatusResponse )
+{
+    case ResponseStatus.Error:
+        <ShowError Errors="@ErrorsResponse" />
+        break;
+    case ResponseStatus.Success:
+    case ResponseStatus.Loading:
+    default:
+        <ShowSuccess Message="Livro cadastrado com sucesso!"
+                     Books="@ViewBookResponse" />
+        break;
+}
+
+
+
+@code {
+    [Parameter] public string Id { get; set; } = string.Empty;
+    private ResponseStatus? StatusResponse { get; set; }
+    private List<string> ErrorsResponse { get; set; } = [];
+    private List<ViewBook> ViewBookResponse { get; set; } = [];
+
+    protected override async void OnInitialized ()
+    {
+        try
+        {
+            int bookId = int.Parse(Id);
+            var response = await bookService.Delete(bookId);
+            StatusResponse = response.Status;
+            ViewBookResponse.AddRange( response.Data );
+            ErrorsResponse.AddRange( response.Errors );
+        }
+        catch ( Exception ex )
+        {
+            StatusResponse = ResponseStatus.Error;
+            ErrorsResponse.Add( ex.Message );
+        }
+    }
+
+}

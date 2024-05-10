@@ -55,7 +55,7 @@
                 <ValidationMessage For="@(() => Book.Synopsis)" />
             </div>
             <button type="submit" class="btn btn-primary">Salvar</button>
-            <NavLink class="btn btn-secondary" href="/livros">Cancelar</NavLink>
+            <a class="btn btn-danger" href="/livros/apagar/@Book.Id">Apagar</a>
         </EditForm>
     </div>
 </div>
@@ -67,7 +67,7 @@
     [Parameter] public EventCallback<List<string>> OnErrorsChange { get; set; }
 
     [SupplyParameterFromForm( FormName = "BookForm" )]
-    public EditBook Book { get; set; } 
+    public EditBook Book { get; set; }
         = new EditBook( "", "", DateTime.Now, PublishingCompany.Nenhum, Category.Nenhum, 0 );
 
     private string Title { get; set; } = string.Empty;
@@ -82,9 +82,9 @@
         Title = bookId == 0
             ? "Novo Livro"
             : "Editar Livro";
-        Book = await getBook(bookId);
+        Book = await getBook( bookId );
     }
-
+    
     private async Task<EditBook> getBook ( int id )
     {
         if ( id == 0 ) return getBook();
@@ -92,7 +92,7 @@
         {
             var response = await bookService.GetById(id);
             var viewBook = response.Data.First();
-            return (EditBook) viewBook;
+            return ( EditBook ) viewBook;
         }
         catch ( Exception ex )
         {
@@ -110,11 +110,11 @@
         try
         {
             var response = bookId == 0
-            ? await bookService.Create(book)
-            : await bookService.Update(book);
+    ? await bookService.Create(book)
+    : await bookService.Update(book);
             Status = response.Status;
             Response = response.Data.First();
-            Errors = response.Errors;
+            Errors.AddRange( response.Errors );
         }
         catch ( Exception ex )
         {
@@ -122,6 +122,7 @@
             Errors.Add( ex.Message );
         }
     }
+
 
     private async Task OnValidSubmit ()
     {

@@ -41,10 +41,10 @@ public class BookRepository (
 
     public async Task DeleteAsync ( int id )
     {
-        var book = await _context.Books.FindAsync(id)
-            ?? throw new BookException("Livro não encontrado!");
         try
         {
+            var book = await _context.Books.FindAsync(id)
+            ?? throw new BookException("Livro não encontrado!");
             _context.Books.Remove( book );
             await _context.SaveChangesAsync();
         }
@@ -55,12 +55,12 @@ public class BookRepository (
     }
     public async Task<Book> UpdateAsync ( Book book )
     {
-        var bookToUpdate = await _context.Books.FindAsync(book.Id)
-            ?? throw new BookException("Livro não encontrado!");
-        bookToUpdate.Update( book );
 
         try
         {
+            var bookToUpdate = await _context.Books.FindAsync(book.Id)
+                   ?? throw new BookException("Livro não encontrado!");
+            bookToUpdate.Update( book );
             _context.Books.Update( bookToUpdate );
             await _context.SaveChangesAsync();
             return bookToUpdate;
