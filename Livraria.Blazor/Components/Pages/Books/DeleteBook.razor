@@ -1,4 +1,4 @@
-﻿@page "/livros/apagar/{id}"
+﻿@page "/livros/apagar/{id:int}"
 @inject IBookService bookService
 @rendermode InteractiveServer
 @attribute [StreamRendering]
@@ -21,7 +21,7 @@
 
 
 @code {
-    [Parameter] public string Id { get; set; } = string.Empty;
+    [Parameter] public int Id { get; set; } = 0;
     private ResponseStatus? StatusResponse { get; set; }
     private List<string> ErrorsResponse { get; set; } = [];
     private List<ViewBook> ViewBookResponse { get; set; } = [];
@@ -30,7 +30,7 @@
     {
         try
         {
-            int bookId = int.Parse(Id);
+            int bookId = Id;
             var response = await bookService.Delete(bookId);
             StatusResponse = response.Status;
             ViewBookResponse.AddRange( response.Data );
