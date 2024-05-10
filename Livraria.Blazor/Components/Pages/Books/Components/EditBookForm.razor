@@ -55,6 +55,7 @@
                 <ValidationMessage For="@(() => Book.Synopsis)" />
             </div>
             <button type="submit" class="btn btn-primary">Salvar</button>
+            <NavLink class="btn btn-secondary" href="/livros">Cancelar</NavLink>
         </EditForm>
     </div>
 </div>
@@ -66,7 +67,8 @@
     [Parameter] public EventCallback<List<string>> OnErrorsChange { get; set; }
 
     [SupplyParameterFromForm( FormName = "BookForm" )]
-    public EditBook Book { get; set; } = null!;
+    public EditBook Book { get; set; } 
+        = new EditBook( "", "", DateTime.Now, PublishingCompany.Nenhum, Category.Nenhum, 0 );
 
     private string Title { get; set; } = string.Empty;
 
@@ -80,20 +82,17 @@
         Title = bookId == 0
             ? "Novo Livro"
             : "Editar Livro";
-        Book = bookId == 0
-            ? getBook()
-            : await getBook( bookId );
+        Book = await getBook(bookId);
     }
 
     private async Task<EditBook> getBook ( int id )
     {
+        if ( id == 0 ) return getBook();
         try
         {
             var response = await bookService.GetById(id);
             var viewBook = response.Data.First();
-            return viewBook is not null
-                ? (EditBook) viewBook
-                :  getBook();
+            return (EditBook) viewBook;
         }
         catch ( Exception ex )
         {

@@ -7,15 +7,15 @@
 @switch ( StatusResponse )
 {
     case ResponseStatus.Error:
-        <ShowError Errors=@ErrorsResponse />
+        <ShowError Errors="@ErrorsResponse" />
         break;
     case ResponseStatus.Success:
         <ShowSuccess Message="Livro cadastrado com sucesso!" 
-            Books="ViewBookResponse" />
+            Books="@ViewBookResponse" />
         break;
     case ResponseStatus.Loading:
     default:
-        <EditBookForm Id=@Id
+        <EditBookForm Id="@Id"
             OnObjectChange="HandleObjecteChange"
             OnStatusChange="HandleStatusChange"
             OnErrorsChange="HandleErrorsChange"/>
