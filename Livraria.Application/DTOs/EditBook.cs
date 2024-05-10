@@ -11,9 +11,11 @@ public class EditBook (
     DateTime publishedAt, 
     PublishingCompany publishingCompany,
     Category category,
+    int id = 0,
     string cover = "", 
     string synopsis = "")
 {
+    public int Id { get; set; } = id;
     [Required( ErrorMessage = "Título do livro é obrigatório" )]
     [StringLength( 150 )]
     public string Title { get; set; } = title;

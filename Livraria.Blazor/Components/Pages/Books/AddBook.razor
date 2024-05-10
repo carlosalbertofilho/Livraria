@@ -4,36 +4,49 @@
 
 <PageTitle>Novo Livro</PageTitle>
 
-@switch ( Status )
+@switch ( StatusResponse )
 {
-    case ResponseStatus.Loading:
-        <ShowLoading />
-        break;
     case ResponseStatus.Error:
-        <ShowError Errors=@Errors />
+        <ShowError Errors=@ErrorsResponse />
         break;
     case ResponseStatus.Success:
-        <ShowSuccess Message="Livro cadastrado com sucesso!" Books="@Response" />
+        <ShowSuccess Message="Livro cadastrado com sucesso!" 
+            Books="ViewBookResponse" />
         break;
+    case ResponseStatus.Loading:
     default:
-
+        <EditBookForm Id="0"
+            OnObjectChange="HandleObjecteChange"
+            OnStatusChange="HandleStatusChange"
+            OnErrorsChange="HandleErrorsChange"/>
         break;
 }
 
 
 @code {
     private EditBook? Book { get; set; }
-    private ResponseStatus? Status { get; set; }
-    private List<ViewBook> Response { get; set; } = [];
-    private List<string> Errors { get; set; } = [];
+    private ResponseStatus? StatusResponse { get; set; }
+    private List<string> ErrorsResponse { get; set; } = [];
+    private List<ViewBook> ViewBookResponse { get; set; } = [];
 
-    private void HandleResponseChange ( ViewBook Response )
-        => this.Response.Add( Response );
+    protected override void OnInitialized()
+        => StatusResponse = ResponseStatus.Loading;
 
-    private void HandleStatusChange ( ResponseStatus? status )
-        => Status = status;
+    private Task HandleObjecteChange ( ViewBook response )
+    {
+        ViewBookResponse.Add( response );
+        return Task.CompletedTask;
+    }
 
-    private void HandleErrorsChange ( List<string> errors )
-        => Errors = errors;
+    private Task HandleStatusChange ( ResponseStatus? status )
+    {
+        StatusResponse = status;
+        return Task.CompletedTask;
+    }
 
+    private Task HandleErrorsChange ( List<string> errors )
+    {
+        ErrorsResponse = errors;
+        return Task.CompletedTask;
+    }
 }

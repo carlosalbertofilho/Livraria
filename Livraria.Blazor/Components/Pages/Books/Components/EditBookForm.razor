@@ -60,13 +60,13 @@
 </div>
 
 @code {
-    [Parameter] public int BookId { get; set; } = 0;
-    [Parameter] public EventCallback<ViewBook> OnResponseChange { get; set; }
+    [Parameter] public string Id { get; set; } = string.Empty;
+    [Parameter] public EventCallback<ViewBook> OnObjectChange { get; set; }
     [Parameter] public EventCallback<ResponseStatus?> OnStatusChange { get; set; }
     [Parameter] public EventCallback<List<string>> OnErrorsChange { get; set; }
 
-    [SupplyParameterFromQuery(FormName = "BookForm")]
-    public EditBook Book { get; set; }
+    [SupplyParameterFromForm( FormName = "BookForm" )]
+    public EditBook Book { get; set; } = null!;
 
     private string Title { get; set; } = string.Empty;
 
@@ -74,45 +74,61 @@
     private ViewBook Response { get; set; } = null!;
     private List<string> Errors { get; set; } = new List<string>();
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized ()
     {
-        Title = BookId == 0 ? "Novo Livro" : "Editar Livro";
-        try
-        {
-            Book = BookId == 0
-                ? new EditBook("", "", DateTime.Now, PublishingCompany.Nenhum, Category.Nenhum)
-                : await bookService.GetById(BookId);
-        }
-        catch (Exception ex)
-        {
-            Status = ResponseStatus.Error;
-            Errors.Add(ex.Message);
-        }
+        int bookId = int.Parse(Id);
+        Title = bookId == 0
+            ? "Novo Livro"
+            : "Editar Livro";
+        Book = bookId == 0
+            ? getBook()
+            : await getBook( bookId );
     }
 
-    private async Task OnAction(EditBook book)
+    private async Task<EditBook> getBook ( int id )
     {
         try
         {
-            var response = BookId == 0
-                ? await bookService.Create(book)
-                : await bookService.Update(BookId, book);
+            var response = await bookService.GetById(id);
+            var viewBook = response.Data.First();
+            return viewBook is not null
+                ? (EditBook) viewBook
+                :  getBook();
+        }
+        catch ( Exception ex )
+        {
+            Status = ResponseStatus.Error;
+            Errors.Add( ex.Message );
+            return getBook();
+        }
+    }
+    private EditBook getBook ()
+        => new EditBook( "", "", DateTime.Now, PublishingCompany.Nenhum, Category.Nenhum, 0 );
+
+    private async Task OnAction ( EditBook book )
+    {
+        int bookId = int.Parse(Id);
+        try
+        {
+            var response = bookId == 0
+            ? await bookService.Create(book)
+            : await bookService.Update(book);
             Status = response.Status;
-            Response = response.Data;
+            Response = response.Data.First();
             Errors = response.Errors;
         }
-        catch (Exception ex)
+        catch ( Exception ex )
         {
             Status = ResponseStatus.Error;
-            Errors.Add(ex.Message);
+            Errors.Add( ex.Message );
         }
     }
 
-    private async Task OnValidSubmit()
+    private async Task OnValidSubmit ()
     {
-        await OnAction(Book);
-        await OnResponseChange.InvokeAsync(EditBook);
-        await OnStatusChange.InvokeAsync(Status);
-        await OnErrorsChange.InvokeAsync(Errors);
+        await OnAction( Book );
+        await OnObjectChange.InvokeAsync( Response );
+        await OnStatusChange.InvokeAsync( Status );
+        await OnErrorsChange.InvokeAsync( Errors );
     }
 }

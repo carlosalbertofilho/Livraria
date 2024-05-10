@@ -17,6 +17,9 @@ public record ViewBook (
     public static implicit operator ViewBook( Book book )
         => book.ToViewBook();
 
+    public static implicit operator EditBook ( ViewBook viewBook )
+        => viewBook.EditBook();
+
     public static implicit operator Book( ViewBook viewBook )
         => viewBook.ToBook();
 };

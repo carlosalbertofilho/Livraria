@@ -4,20 +4,19 @@
 
 <PageTitle>Editar Livro</PageTitle>
 
-@switch ( Status )
+@switch ( StatusResponse )
 {
-    case ResponseStatus.Loading:
-        <ShowLoading />
-        break;
     case ResponseStatus.Error:
-        <ShowError Errors=@Errors />
+        <ShowError Errors=@ErrorsResponse />
         break;
     case ResponseStatus.Success:
-        <ShowSuccess Message="Livro atualizado com sucesso!" Books=@Response />
+        <ShowSuccess Message="Livro cadastrado com sucesso!" 
+            Books="ViewBookResponse" />
         break;
+    case ResponseStatus.Loading:
     default:
-        <EditBookPage BookId="Id"
-            OnResponseChange="HandleResponseChange"
+        <EditBookForm Id=@Id
+            OnObjectChange="HandleObjecteChange"
             OnStatusChange="HandleStatusChange"
             OnErrorsChange="HandleErrorsChange"/>
         break;
@@ -26,27 +25,29 @@
 
 
 @code {
-    [Parameter] public int Id { get; set; }
-    private EditBook? Book { get; set; }
-    private ResponseStatus? Status { get; set; }
-    private List<ViewBook> Response { get; set; } = [];
-    private List<string> Errors { get; set; } = [];
+    [Parameter] public string Id { get; set; } = string.Empty;
+    private ResponseStatus? StatusResponse { get; set; }
+    private List<string> ErrorsResponse { get; set; } = [];
+    private List<ViewBook> ViewBookResponse { get; set; } = [];
 
-    private Task HandleResponseChange ( ViewBook response )
+    protected override void OnInitialized ()
+       => StatusResponse = ResponseStatus.Loading;
+
+    private Task HandleObjecteChange ( ViewBook response )
     {
-        this.Response.Add( response );
+        ViewBookResponse.Add( response );
         return Task.CompletedTask;
     }
 
     private Task HandleStatusChange ( ResponseStatus? status )
     {
-        Status = status;
+        StatusResponse = status;
         return Task.CompletedTask;
     }
 
     private Task HandleErrorsChange ( List<string> errors )
     {
-        Errors = errors;
+        ErrorsResponse = errors;
         return Task.CompletedTask;
     }
 

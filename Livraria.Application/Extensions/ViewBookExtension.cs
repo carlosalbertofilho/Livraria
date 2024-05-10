@@ -19,6 +19,16 @@ public static class ViewBookExtension
         ? throw new ArgumentNullException( nameof( books ) ) 
         : books.Select( book => book.ToViewBook() );
 
+    public static EditBook EditBook ( this ViewBook viewBook )
+        => new( viewBook.Title,
+               viewBook.Author,
+               viewBook.PublishedAt,
+               viewBook.PublishingCompany,
+               viewBook.Category,
+               viewBook.Id,
+               viewBook.Cover,
+               viewBook.Synopsis );
+
     public static Book ToBook ( this ViewBook viewBook )
         => new( viewBook.Title,
                viewBook.Author,

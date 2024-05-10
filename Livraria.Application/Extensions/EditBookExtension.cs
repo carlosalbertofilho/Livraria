@@ -20,6 +20,7 @@ public static class EditBookExtension
                book.PublishedAt,
                book.PublishingCompany,
                book.Category,
+               book.Id,
                book.Cover,
                book.Synopsis );
 }
