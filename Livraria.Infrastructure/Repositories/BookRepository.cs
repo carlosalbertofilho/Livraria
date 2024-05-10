@@ -65,9 +65,9 @@ public class BookRepository (
             await _context.SaveChangesAsync();
             return bookToUpdate;
         }
-        catch ( DbUpdateConcurrencyException )
+        catch ( Exception e)
         {
-            throw new BookException( "Falha ao atualizar livro" );
+            throw new BookException( e.Message );
         }
     }
 }
