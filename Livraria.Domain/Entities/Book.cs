@@ -100,6 +100,7 @@ public class Book ( string title,
 
     public void Update ( Book book )
     {
+        Id = book.Id;
         Title = book.Title;
         Author = book.Author;
         PublishedAt = book.PublishedAt;

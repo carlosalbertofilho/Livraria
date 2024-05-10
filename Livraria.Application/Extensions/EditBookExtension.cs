@@ -11,7 +11,7 @@ public static class EditBookExtension
                editBook.PublishedAt,
                editBook.PublishingCompany,
                editBook.Category,
-               0,
+               editBook.Id,
                editBook.Cover,
                editBook.Synopsis );
     public static EditBook ToEditBook ( this Book book )
